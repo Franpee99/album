@@ -54,7 +54,9 @@
                 <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                     <tr>
                         <th scope="col" class="px-6 py-3">
-                            Título
+                            <a href="{{ route('albumes.show', ['album' => $album->id, 'sort' => 'canciones.nombre', 'direction' => $direction === 'asc' ? 'desc' : 'asc']) }}">
+                                Título
+                            </a>
                         </th>
                         <th scope="col" class="px-6 py-3">
                             Duracion

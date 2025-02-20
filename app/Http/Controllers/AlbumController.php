@@ -5,8 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreAlbumRequest;
 use App\Http\Requests\UpdateAlbumRequest;
 use App\Models\Album;
-use App\Models\Cancion;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 
 class AlbumController extends Controller
 {
@@ -62,15 +61,30 @@ class AlbumController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Album $album)
+    public function show(Request $request, Album $album)
     {
+        $column = $request->query('sort', 'canciones.titulo');
+        $direction = $request->query('direction', 'asc');
+
+        if (!in_array($column, ['canciones.titulo'])) {
+            $column = 'canciones.titulo';
+        }
+
+        // Obtener las canciones asociadas al álbum con ordenación y paginación
+        $canciones = $album->canciones()->orderBy($column, $direction)->paginate(2); // Añadir `paginate(5)`
+
+        // Calcular la duración total del álbum
+        $duracion_total = $album->canciones()->sum('duracion');
 
         return view('albumes.show', [
             'album' => $album,
-            'canciones' =>  $album->canciones()->paginate(2),
-            'duracion_total' => $album->canciones()->sum('duracion'),
+            'canciones' => $canciones,
+            'duracion_total' => $duracion_total,
+            'column' => $column,
+            'direction' => $direction,
         ]);
     }
+
 
     /**
      * Show the form for editing the specified resource.

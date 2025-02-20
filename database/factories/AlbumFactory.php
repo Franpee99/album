@@ -2,6 +2,9 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
+use Illuminate\Support\Str;
+
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,7 +20,9 @@ class AlbumFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'titulo' => fake()->text(25),
+            'anyo' => fake()->numberBetween(1980, now()->year),
+            'imagen' => "storage/app/public/imagenes/perro.jpg",
         ];
     }
 }

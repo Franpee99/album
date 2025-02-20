@@ -3,10 +3,13 @@
 use App\Http\Controllers\AlbumController;
 use App\Http\Controllers\ProfileController;
 use App\Livewire\SeleccionAlbum;
+use App\Models\Album;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('albumes.index',[
+        'albumes' => Album::paginate(2),
+    ]);
 });
 
 Route::get('/dashboard', function () {
