@@ -6,9 +6,19 @@ use App\Http\Requests\StoreAlbumRequest;
 use App\Http\Requests\UpdateAlbumRequest;
 use App\Models\Album;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Support\Facades\Gate;
 
-class AlbumController extends Controller
+class AlbumController extends Controller implements HasMiddleware
 {
+
+    public static function middleware() // Para implementar que debe estar logeado
+    {
+        return [
+            new Middleware('auth', only: ['create', 'store', 'edit', 'update']), // Para que te rediriga a iniciar sesion
+        ];
+    }
     /**
      * Display a listing of the resource.
      */
@@ -23,8 +33,11 @@ class AlbumController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Album $album)
     {
+        // Autorizar la creacion
+        Gate::authorize('create', $album);
+
         return view('albumes.create');
     }
 
@@ -63,15 +76,19 @@ class AlbumController extends Controller
      */
     public function show(Request $request, Album $album)
     {
+
         $column = $request->query('sort', 'canciones.titulo');
         $direction = $request->query('direction', 'asc');
 
-        if (!in_array($column, ['canciones.titulo'])) {
+
+        if (!in_array($column, ['canciones.titulo', 'canciones.created_at'])) {
             $column = 'canciones.titulo';
         }
 
         // Obtener las canciones asociadas al álbum con ordenación y paginación
-        $canciones = $album->canciones()->orderBy($column, $direction)->paginate(2); // Añadir `paginate(5)`
+        $canciones = $album->canciones()
+            ->orderBy($column, $direction)
+            ->paginate(2);
 
         // Calcular la duración total del álbum
         $duracion_total = $album->canciones()->sum('duracion');
@@ -101,6 +118,9 @@ class AlbumController extends Controller
      */
     public function update(UpdateAlbumRequest $request, Album $album)
     {
+        // Autorizar la edición
+        Gate::authorize('update', $album);
+
         $album->titulo = $request->titulo;
         $album->anyo = $request->anyo;
 
@@ -131,6 +151,9 @@ class AlbumController extends Controller
      */
     public function destroy(Album $album)
     {
+        // Autorizar la edición
+        Gate::authorize('create', $album);
+
         $album->delete();
         return redirect()->route('albumes.index');
     }

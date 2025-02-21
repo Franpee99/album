@@ -54,15 +54,20 @@
                 <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                     <tr>
                         <th scope="col" class="px-6 py-3">
-                            <a href="{{ route('albumes.show', ['album' => $album->id, 'sort' => 'canciones.nombre', 'direction' => $direction === 'asc' ? 'desc' : 'asc']) }}">
+                            <a href="{{ route('albumes.show', ['album' => $album->id, 'sort' => 'canciones.titulo', 'direction' => $direction === 'asc' ? 'desc' : 'asc']) }}">
                                 Título
                             </a>
                         </th>
                         <th scope="col" class="px-6 py-3">
-                            Duracion
+                            Duración
                         </th>
                         <th scope="col" class="px-6 py-3">
                             Artistas
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                            <a href="{{ route('albumes.show', ['album' => $album->id, 'sort' => 'canciones.created_at', 'direction' => $direction === 'asc' ? 'desc' : 'asc']) }}">
+                                Fecha de salida
+                            </a>
                         </th>
                     </tr>
                 </thead>
@@ -82,6 +87,9 @@
 
                             @endforeach
                         </td>
+                        <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                            {{ $cancion->created_at }}
+                        </th>
                     </tr>
                     @endforeach
                 </tbody>

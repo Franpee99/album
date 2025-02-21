@@ -27,25 +27,31 @@ class AlbumPolicy
     /**
      * Determine whether the user can create models.
      */
-    public function create(User $user): bool
+    public function create(User $user): Response
     {
-        return false;
+        return $user->name == 'admin'
+                        ? Response::allow()
+                        : Response::deny("No eres admin.");
     }
 
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, Album $album): bool
+    public function update(User $user, Album $album): Response
     {
-        return false;
+        return $user->name == 'admin'
+                        ? Response::allow()
+                        : Response::deny("No eres admin.");
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, Album $album): bool
+    public function delete(User $user, Album $album): Response
     {
-        return false;
+        return $user->name == 'admin'
+                        ? Response::allow()
+                        : Response::deny("No eres admin.");
     }
 
     /**
