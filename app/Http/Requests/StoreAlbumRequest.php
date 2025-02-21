@@ -25,6 +25,28 @@ class StoreAlbumRequest extends FormRequest
         return [
             'titulo' => 'required|string|max:255',
             'anyo' => 'required|integer|digits:4|min:1900|max:' . date('Y'),
+            'canciones' => 'array', // Validar que canciones es un array
+            'canciones.*' => 'exists:canciones,id', // Validar que cada canción existe en la tabla canciones
         ];
+    }
+
+    /**
+     * Configure the validator instance.
+     *
+     * @param  \Illuminate\Validation\Validator  $validator
+     * @return void
+     */
+    public function withValidator($validator)
+    {
+        $validator->after(function ($validator) {
+            if ($this->has('canciones')) {
+                foreach ($this->input('canciones') as $cancionId) {
+                    $cancion = \App\Models\Cancion::find($cancionId);
+                    if ($cancion && $cancion->artistas->isEmpty()) {
+                        $validator->errors()->add('canciones', 'Cada canción debe tener al menos un artista.');
+                    }
+                }
+            }
+        });
     }
 }

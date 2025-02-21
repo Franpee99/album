@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreAlbumRequest;
 use App\Http\Requests\UpdateAlbumRequest;
 use App\Models\Album;
+use App\Models\Cancion;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
@@ -38,7 +39,9 @@ class AlbumController extends Controller implements HasMiddleware
         // Autorizar la creacion
         Gate::authorize('create', $album);
 
-        return view('albumes.create');
+        return view('albumes.create',[
+            'canciones' => Cancion::all(),
+        ]);
     }
 
     /**
@@ -66,6 +69,11 @@ class AlbumController extends Controller implements HasMiddleware
 
         // Guardar nuevamente el álbum con la imagen (o dejarlo NULL si no hay imagen)
         $album->save();
+
+        // Guardar las canciones asociadas
+        if ($request->has('canciones')) {
+            $album->canciones()->sync($request->input('canciones'));
+        }
 
         return redirect()->route('albumes.index');
     }
