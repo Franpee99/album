@@ -152,7 +152,7 @@ class AlbumController extends Controller implements HasMiddleware
     public function destroy(Album $album)
     {
         // Autorizar la edición
-        Gate::authorize('create', $album);
+        Gate::authorize('delete', $album);
 
         $album->delete();
         return redirect()->route('albumes.index');
